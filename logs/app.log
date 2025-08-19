@@ -1,0 +1,23 @@
+2025-08-17 21:29:46,781 - __main__ - INFO - ÕýÔÚÆô¶¯Éú²ú»·¾³·þÎñ...
+2025-08-17 21:29:47,962 - numexpr.utils - INFO - Note: NumExpr detected 24 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 16.
+2025-08-17 21:29:47,964 - numexpr.utils - INFO - NumExpr defaulting to 16 threads.
+2025-08-17 21:29:53,204 - tensorflow - WARNING - From C:\Users\Lenovo\miniconda3\envs\musicwx\lib\site-packages\tf_keras\src\losses.py:2976: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
+
+2025-08-17 21:29:53,894 - music_recommender - INFO - Êý¾Ý¿â³õÊ¼»¯³É¹¦
+2025-08-17 21:29:54,039 - music_recommender - INFO - ÒôÀÖ¿â¼ÓÔØÍê³É£¬¹² 20 Ê×¸èÇú
+2025-08-17 21:29:54,039 - music_recommender - INFO - music_library keys: ['happy', 'sad', 'angry', 'neutral', 'surprise', 'fear', 'disgust', 'anxiety', 'excited', 'calm']
+2025-08-17 21:29:54,040 - music_recommender - INFO - happy: 5 Ê×
+2025-08-17 21:29:54,040 - music_recommender - INFO - sad: 5 Ê×
+2025-08-17 21:29:54,040 - music_recommender - INFO - angry: 5 Ê×
+2025-08-17 21:29:54,040 - music_recommender - INFO - neutral: 5 Ê×
+2025-08-17 21:29:54,040 - music_recommender - INFO - surprise: 0 Ê×
+2025-08-17 21:29:54,040 - music_recommender - INFO - fear: 0 Ê×
+2025-08-17 21:29:54,040 - music_recommender - INFO - disgust: 0 Ê×
+2025-08-17 21:29:54,040 - music_recommender - INFO - anxiety: 0 Ê×
+2025-08-17 21:29:54,040 - music_recommender - INFO - excited: 0 Ê×
+2025-08-17 21:29:54,040 - music_recommender - INFO - calm: 0 Ê×
+2025-08-17 21:29:54,065 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8881
+ * Running on http://192.168.10.12:8881
+2025-08-17 21:29:54,066 - werkzeug - INFO - [33mPress CTRL+C to quit[0m

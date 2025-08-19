@@ -1,0 +1,8 @@
+<view class="user-page">
+  <view class="user-header">
+    <image class="user-avatar" src="{{userInfo.avatarUrl}}"></image>
+    <view class="user-nick">{{userInfo.nickName}}</view>
+  </view>
+  <view class="user-chart-title">历史情绪波动</view>
+  <ec-canvas id="historyChart" canvas-id="historyChart" ec="{{historyChart}}"></ec-canvas>
+</view>

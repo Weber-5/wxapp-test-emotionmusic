@@ -1,0 +1,226 @@
+<!--pages/index/index.wxml-->
+<!-- 主容器 -->
+<view class="container">
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">正在加载...</text>
+  </view>
+
+  <!-- 错误状态 -->
+  <view class="error-container" wx:elif="{{errorMessage}}">
+    <text class="error-icon">⚠️</text>
+    <text class="error-text">{{errorMessage}}</text>
+    <button class="retry-btn" bindtap="startExperience">重试</button>
+  </view>
+
+  <!-- 3秒倒计时提示弹窗 -->
+  <view class="countdown-mask" wx:if="{{showCountdown}}">
+    <view class="countdown-content">
+      <view class="countdown-title">请看向镜头</view>
+      <view class="countdown-num">{{countdownNum}}</view>
+    </view>
+  </view>
+
+  <!-- 用户信息栏 -->
+  <view class="user-bar" wx:if="{{userInfo}}">
+    <image class="user-avatar" src="{{userInfo.avatarUrl}}"></image>
+    <text class="user-nick">{{userInfo.nickName}}</text>
+    <button class="user-center-btn" bindtap="goUserCenter">用户中心</button>
+  </view>
+  
+  <!-- 主页主内容（无条件渲染） -->
+  <view class="home-page page-transition fade-in" wx:elif="{{currentPage === 'home'}}">
+    <!-- 粒子背景已移除 -->
+    
+    <view class="home-content">
+      <view class="app-title">🎵 情绪音乐</view>
+      <view class="app-subtitle">通过AI识别您的情绪，为您推荐最适合的音乐</view>
+      
+      <button class="start-btn bounce" bindtap="startExperience">
+        开始体验
+      </button>
+      
+      <view class="feature-list">
+        <view class="feature-item">
+          <view class="feature-icon">🎭</view>
+          <text class="feature-text">智能情绪识别</text>
+        </view>
+        <view class="feature-item">
+          <view class="feature-icon">🎵</view>
+          <text class="feature-text">个性化音乐推荐</text>
+        </view>
+        <view class="feature-item">
+          <view class="feature-icon">💚</view>
+          <text class="feature-text">实时情绪调节</text>
+        </view>
+        <view class="feature-item">
+          <view class="feature-icon">📊</view>
+          <text class="feature-text">智能学习优化</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 相机页面 -->
+  <view class="camera-page page-transition slide-up" wx:elif="{{currentPage === 'camera'}}">
+    <view class="camera-container">
+      <!-- 进度条 -->
+      <view class="progress-bar">
+        <view class="progress-text">检测进度: {{detectionTime}}/{{totalDetectionTime}}秒</view>
+        <view class="progress-container">
+          <view class="progress-fill" style="width: {{detectionProgress}}%"></view>
+        </view>
+      </view>
+      
+      <camera 
+        class="camera-view" 
+        device-position="front" 
+        flash="off">
+      </camera>
+      
+      <!-- 情绪显示悬浮卡片 -->
+      <view class="emotion-overlay" wx:if="{{currentEmotion}}">
+        <view class="emotion-card">
+          <view class="emotion-text">{{emotionName}}</view>
+          <view class="confidence-text">置信度: {{confidenceText}}%</view>
+        </view>
+      </view>
+      
+      <!-- 控制按钮 -->
+      <view class="control-buttons">
+        <button class="control-btn" bindtap="goHome">返回</button>
+        <button class="control-btn" bindtap="useTestEmotion">
+          测试模式
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 情绪报告页面 -->
+  <view class="report-page page-transition fade-in" wx:elif="{{currentPage === 'report'}}">
+    <view class="report-header">
+      <view class="report-title">情绪检测报告</view>
+      <view class="report-subtitle">基于10秒检测结果</view>
+    </view>
+    
+    <!-- 环形图表 -->
+    <view class="report-chart">
+      <canvas canvas-id="emotionPie" id="emotionPie" class="emotion-pie-canvas"></canvas>
+    </view>
+    
+    <!-- 情绪统计图表 -->
+    <view class="emotion-stats">
+      <view class="stats-title">情绪占比分析</view>
+      <view class="stats-container">
+        <view class="stat-item" wx:for="{{topEmotionStats}}" wx:key="emotion" wx:for-item="stat" wx:for-index="emotion">
+          <view class="emotion-name">{{getEmotionName(emotion)}}</view>
+          <view class="stat-details">
+            <text class="percentage">{{stat.percentage}}%</text>
+            <text class="count">({{stat.count}}次)</text>
+            <text class="confidence">置信度: {{stat.avgConfidence}}%</text>
+            <text class="emotion-label">{{getEmotionName(emotion)}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 操作按钮 -->
+    <view class="report-actions">
+      <button class="action-btn secondary" bindtap="goHome">重新检测</button>
+      <button class="action-btn primary" bindtap="goToRecommendations">
+        查看推荐
+      </button>
+    </view>
+  </view>
+
+  <!-- 音乐页面 -->
+  <view class="music-page page-transition fade-in" wx:elif="{{currentPage === 'music'}}">
+    <!-- 顶部情绪信息条 -->
+    <view class="music-header">
+      <view class="current-emotion" wx:if="{{currentEmotion}}">{{emotionName}}</view>
+      <view class="emotion-description" wx:if="{{emotionDescription}}">{{emotionDescription}} (置信度 {{confidenceText}}%)</view>
+    </view>
+
+    <!-- 播放模式切换 -->
+    <view class="mode-switch">
+      <view class="mode-btn {{playMode === 'auto' ? 'active' : 'inactive'}}" bindtap="switchPlayMode">自动播放</view>
+      <view class="mode-btn {{playMode === 'manual' ? 'active' : 'inactive'}}" bindtap="switchPlayMode">手动选择</view>
+    </view>
+
+    <!-- 音乐控制 -->
+    <view class="music-controls">
+      <view class="control-icon" bindtap="playNextSong">⏮️</view>
+      <view class="play-btn bounce" bindtap="togglePlay">{{isPlaying ? '⏸️' : '▶️'}}</view>
+      <view class="control-icon" bindtap="playNextSong">⏭️</view>
+    </view>
+
+    <!-- 骨架屏：推荐加载中 -->
+    <view class="recommendations-list" wx:if="{{isRecoLoading}}">
+      <view class="skeleton-item" wx:for="{{skeletonArray}}" wx:key="*this">
+        <view class="skeleton-title"></view>
+        <view class="skeleton-sub"></view>
+        <view class="skeleton-tag"></view>
+      </view>
+    </view>
+
+    <!-- 推荐列表 -->
+    <view class="recommendations-list" wx:elif="{{recommendations.length > 0}}">
+      <view class="song-item {{currentSong && currentSong.id === item.id ? 'playing' : ''}}" 
+            wx:for="{{recommendations}}" 
+            wx:key="id"
+            bindtap="selectSong"
+            data-song="{{item}}">
+        <view class="song-title">{{item.title}}</view>
+        <view class="song-artist">{{item.artist}}</view>
+        <view class="song-footer">
+          <view class="song-emotion">{{item.emotion_category}}</view>
+          <view class="playing-dot" wx:if="{{currentSong && currentSong.id === item.id && isPlaying}}"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="recommendations-list" wx:else>
+      <view class="debug-info">
+        <text>暂无推荐音乐，正在加载...</text>
+      </view>
+    </view>
+
+    <!-- 底部操作 -->
+    <view class="rating-actions">
+      <button class="action-btn secondary" bindtap="goHome">返回首页</button>
+      <button class="action-btn primary" bindtap="endExperience" wx:if="{{currentSong}}">结束体验</button>
+    </view>
+  </view>
+
+  <!-- 评分页面 -->
+  <view class="rating-page page-transition slide-up" wx:elif="{{currentPage === 'rating'}}">
+    <view class="rating-title">为这首歌评分</view>
+    
+    <view class="song-item" wx:if="{{currentSong}}">
+      <view class="song-title">{{currentSong.title}}</view>
+      <view class="song-artist">{{currentSong.artist}}</view>
+    </view>
+    
+    <view class="rating-stars">
+      <view class="star-btn {{currentRating >= 1 ? 'active' : ''}}" 
+            bindtap="onRatingChange" data-value="1">⭐</view>
+      <view class="star-btn {{currentRating >= 2 ? 'active' : ''}}" 
+            bindtap="onRatingChange" data-value="2">⭐</view>
+      <view class="star-btn {{currentRating >= 3 ? 'active' : ''}}" 
+            bindtap="onRatingChange" data-value="3">⭐</view>
+      <view class="star-btn {{currentRating >= 4 ? 'active' : ''}}" 
+            bindtap="onRatingChange" data-value="4">⭐</view>
+      <view class="star-btn {{currentRating >= 5 ? 'active' : ''}}" 
+            bindtap="onRatingChange" data-value="5">⭐</view>
+    </view>
+    
+    <view class="rating-actions">
+      <button class="action-btn secondary" bindtap="cancelRating">取消</button>
+      <button class="action-btn primary" bindtap="submitRating" wx:if="{{currentRating > 0}}">
+        提交评分
+      </button>
+    </view>
+  </view>
+</view> 
