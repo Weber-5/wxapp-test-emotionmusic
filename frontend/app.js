@@ -17,6 +17,7 @@ App({
   globalData: {
     userInfo: null,
     // 本地开发调试地址
-    serverUrl: 'https://8.148.78.190',
+    serverUrl: 'here you should write you own api',
   }
+
 }) 
